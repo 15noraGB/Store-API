@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "title": "Fjallraven Backpack",
+      "price": 109.95,
+      "category": "men's clothing",
+      "description": "Your perfect backpack",
+      "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+      "rating": {
+        "rate": 3.9,
+        "count": 120
+      }
+    }
+  ]
+  
