@@ -1,9 +1,10 @@
 export interface Product {
     id: number;
+    created_at: Date;
     title: string;
     price: number;
     description: string;
-    category: string;
+    category: number;
     image: string;
     rating: {
         rate: number;
@@ -12,6 +13,6 @@ export interface Product {
 }
 
 
-export type CreateProductDTO = Omit<Product, 'id'>;
+export type CreateProductDTO = Omit<Product, 'id' | 'created_at'>;
 export type UpdateProductDTO = Partial<Product>;
 
