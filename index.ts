@@ -1,22 +1,26 @@
-import 'dotenv/config';
-import * as express from "express";
-import * as path from "path";
+import "dotenv/config";
+import express from "express";
+import path from "path";
+
 import productRoutes from "./endpoints/products";
+import usersRoutes from "./endpoints/users";
 
 const app = express();
-const port = parseInt(process.env.PORT) || process.argv[3] || 8080;
+const port = parseInt(process.env.PORT || "8080");
 
+// Middlewares
 app.use(express.json());
 
-app.use('/products', productRoutes);
+// Rutas API
+app.use("/api/products", productRoutes);
+app.use("/api/users", usersRoutes);
 
-
-app.get('/', (req, res) => {
-  res.send('querida!');
+// Ruta raíz
+app.get("/", (req, res) => {
+  res.send("API Tienda Online funcionando");
 });
 
-
-
+// Servidor
 app.listen(port, () => {
   console.log(`Listening on http://localhost:${port}`);
 });
