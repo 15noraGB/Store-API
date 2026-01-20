@@ -37,7 +37,6 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const product: CreateProductDTO = req.body;
-    // The original query had 6 value placeholders for 5 columns. Corrected to 5.
     const result = await pool.query(
       'INSERT INTO products(title, price, description, category, image) VALUES ($1, $2, $3, $4, $5) RETURNING id',
       [
@@ -48,7 +47,6 @@ router.post('/', async (req: Request, res: Response) => {
         product.image,
       ]
     );
-    // 'result' from pg doesn\'t have a .json method, use 'res'. Also fixed typo in 'message'.
     res.status(201).json({ message: 'Product created', id: result.rows[0].id });
   } catch (error) {
     console.error('Error executing query', error);
@@ -57,21 +55,22 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 //=====================================================
-// Shared function to update a product (for PUT and PATCH)
+// Función compartida para actualizar
 const updateProduct = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const updates: UpdateProductDTO = req.body;
 
-    const fields = [];
-    const values = [];
+    const fields: string[] = [];
+    const values: any[] = [];
     let queryIndex = 1;
 
-    // Dynamically construct the SET part of the query from the request body
-    for (const key in updates) {
-      if (Object.prototype.hasOwnProperty.call(updates, key as keyof UpdateProductDTO)) {
+    // Usamos Object.entries para evitar problemas de tipos con "key in updates"
+    for (const [key, value] of Object.entries(updates)) {
+      // Evitamos actualizar el ID o campos que no existan
+      if (value !== undefined && key !== 'id') {
         fields.push(`${key} = $${queryIndex++}`);
-        values.push(updates[key as keyof UpdateProductDTO]);
+        values.push(value);
       }
     }
 
@@ -83,7 +82,9 @@ const updateProduct = async (req: Request, res: Response) => {
     const updateQuery = `UPDATE products SET ${fields.join(', ')} WHERE id = $${queryIndex} RETURNING *`;
 
     const result = await pool.query(updateQuery, values);
-    if (result.rowCount > 0) {
+    
+    // CAMBIO CLAVE: Usamos rows.length en lugar de rowCount
+    if (result.rows.length > 0) {
       res.json(result.rows[0]);
     } else {
       res.status(404).json({ error: 'Product not found' });
@@ -94,9 +95,6 @@ const updateProduct = async (req: Request, res: Response) => {
   }
 };
 
-// PUT and PATCH routes were using a non-existent in-memory 'products' array.
-// They are now correctly implemented to update the product in the database.
-// Both are implemented to perform a partial update.
 router.put('/:id', updateProduct);
 router.patch('/:id', updateProduct);
 
@@ -105,10 +103,11 @@ router.patch('/:id', updateProduct);
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    // The original code was using an in-memory 'products' array. Corrected to use the database.
     const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING *', [id]);
-    if (result.rowCount > 0) {
-      res.json(result.rows[0]); // Return the deleted product
+    
+    // CAMBIO CLAVE: Usamos rows.length
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]); 
     } else {
       res.status(404).json({ error: 'Product not found' });
     }
