@@ -1,9 +1,10 @@
 import { Pool } from 'pg';
+import 'dotenv/config';
 
+// Render y Supabase requieren SSL para conectar de forma segura
 export const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    user: process.env.DB_USER,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Necesario para que Render no rechace el certificado de Supabase
+  }
 });
