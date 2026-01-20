@@ -4,7 +4,7 @@ export interface Product {
     title: string;
     price: number;
     description: string;
-    category: number;
+    category: string; // Cambiado de number a string
     image: string;
     rating: {
         rate: number;
@@ -12,7 +12,5 @@ export interface Product {
     };
 }
 
-
 export type CreateProductDTO = Omit<Product, 'id' | 'created_at'>;
 export type UpdateProductDTO = Partial<Product>;
-

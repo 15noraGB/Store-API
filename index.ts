@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import path from "path";
+import cors from "cors"; // 1. Importamos cors
 
 import productRoutes from "./endpoints/products";
 import usersRoutes from "./endpoints/users";
@@ -9,6 +10,7 @@ const app = express();
 const port = parseInt(process.env.PORT || "8080");
 
 // Middlewares
+app.use(cors()); // 2. Habilitamos CORS para que Vercel pueda consultar la API
 app.use(express.json());
 
 // Rutas API
